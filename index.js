@@ -6,8 +6,9 @@ var objs = [];
 var powerups = [];
 
 class PowerUp {
-    constructor(x,y) {
+    constructor(x,y,n) {
         this.pos = createVector(x,y);
+        this.name = 'Power'
         powerups.push(this);
     }
 
@@ -18,7 +19,7 @@ class PowerUp {
                 obj.pos.x,obj.pos.y
             ) < 10
         ) {
-            obj.up('vision')
+            obj.up(this.name)
         }
     }
 
@@ -30,6 +31,26 @@ class PowerUp {
             this.pos.x,this.pos.y,
             10,10
         )
+    }
+}
+
+class VisonPoint extends PowerUp {
+    constructor (x,y) {
+        super(x,y,'vision')
+        this.name = 'vision'
+    }
+
+    update(obj) {
+        if (
+            dist(
+                this.pos.x,this.pos.y,
+                obj.pos.x,obj.pos.y
+            ) < 20
+        ) {
+            obj.up(this.name)
+        } else {
+            obj.up(`-${this.name}`)
+        }
     }
 }
 
@@ -69,6 +90,14 @@ class Player {
         switch (trait) {
             case 'vision':
                 this.range += 10;
+            break;
+
+            case '-vision':
+                if (this.range > 50)
+                    this.range -= 10;
+            break;
+            
+            default:
             break;
         }
     }
@@ -115,6 +144,9 @@ class Player {
             }
         }
 
+        fill(29,155,203)
+        stroke(29,155,203)
+
         rect(
             this.pos.x-5,
             this.pos.y-5,
@@ -137,7 +169,7 @@ function setup() {
         );
     }
 
-    new PowerUp(200,200);
+    new VisonPoint(200,200);
 }
 
 document.addEventListener('keydown', (e) => {
